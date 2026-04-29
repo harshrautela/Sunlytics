@@ -223,10 +223,7 @@ function generateShortTermPrediction(
   region: RegionData,
 ): string {
   const year1Savings = Math.round(bestConfig.annualSavings);
-  const year5Savings = Math.round(
-    bestConfig.annualSavings *
-      ((1 - Math.pow(1 - SYSTEM_DEGRADATION_RATE, 5)) / SYSTEM_DEGRADATION_RATE),
-  );
+  const year5Savings = Math.round(cumulativeSavings(bestConfig.annualSavings, 5));
 
   return (
     `In the first year, you'll save approximately $${year1Savings.toLocaleString()} after your ` +
@@ -237,6 +234,23 @@ function generateShortTermPrediction(
 }
 
 const SYSTEM_DEGRADATION_RATE = 0.005;
+const ELECTRICITY_ESCALATION_RATE = 0.025;
+
+/**
+ * Calculate cumulative savings over N years accounting for both system
+ * degradation and electricity rate escalation.
+ */
+function cumulativeSavings(firstYearSavings: number, years: number): number {
+  let total = 0;
+  let output = 1.0;
+  let rateMultiplier = 1.0;
+  for (let y = 1; y <= years; y++) {
+    total += firstYearSavings * output * rateMultiplier;
+    output *= 1 - SYSTEM_DEGRADATION_RATE;
+    rateMultiplier *= 1 + ELECTRICITY_ESCALATION_RATE;
+  }
+  return total;
+}
 
 /**
  * Generate long-term prediction (10-25 years).

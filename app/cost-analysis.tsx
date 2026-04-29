@@ -33,9 +33,24 @@ export default function CostAnalysisScreen() {
     );
   }
 
-  const year5Cumulative = Math.round(config.annualSavings * 4.9); // approx with degradation
-  const year10Cumulative = Math.round(config.annualSavings * 9.6);
-  const year25Cumulative = Math.round(config.roi25Year + config.netCost); // total savings
+  const DEGRADATION_RATE = config.panel.degradationRate / 100;
+  const ESCALATION_RATE = 0.025;
+
+  function calcCumulative(years: number): number {
+    let total = 0;
+    let output = 1.0;
+    let rateMult = 1.0;
+    for (let y = 1; y <= years; y++) {
+      total += config.annualSavings * output * rateMult;
+      output *= 1 - DEGRADATION_RATE;
+      rateMult *= 1 + ESCALATION_RATE;
+    }
+    return Math.round(total);
+  }
+
+  const year5Cumulative = calcCumulative(5);
+  const year10Cumulative = calcCumulative(10);
+  const year25Cumulative = calcCumulative(25);
 
   return (
     <SafeAreaView style={styles.safe}>

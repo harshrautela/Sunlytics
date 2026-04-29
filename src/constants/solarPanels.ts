@@ -79,7 +79,7 @@ export const SOLAR_PANELS: SolarPanel[] = [
     brand: 'Jinko Solar',
     model: 'Tiger Neo N-type 72HL4-V 580',
     wattage: 580,
-    efficiency: 22.02,
+    efficiency: 22.0,
     dimensions: { lengthInches: 87.6, widthInches: 44.3 },
     areaSquareFeet: 27.0,
     pricePerPanel: 340,
